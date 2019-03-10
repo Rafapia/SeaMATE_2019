@@ -1,0 +1,2 @@
+# Ignore all files DS_Store that come when pushing from Mac
+.DS_Store
