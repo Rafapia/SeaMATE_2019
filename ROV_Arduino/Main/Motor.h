@@ -4,8 +4,6 @@
  *  Mar 7, 2019.
  */
 
-
-
  #ifndef Motor_h
  #define Motor_h
 
