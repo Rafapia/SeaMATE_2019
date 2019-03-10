@@ -1,0 +1,2 @@
+# Ignore all .hex files (Stino SublimeText extension for Arduino)
+*.hex
