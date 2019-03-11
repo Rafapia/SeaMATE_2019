@@ -1,6 +1,7 @@
 import socket
+import json
 import numpy as np
 
 
 if __name__=='__main__':
-  print("Hello World!")
+  print("Done executing Server!")
