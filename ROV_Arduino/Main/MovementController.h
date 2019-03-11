@@ -2,6 +2,9 @@
  *  MovementController.h - Controls the behavior of all motors to achieve a specific movement.
  *  Written by Rafael Piacsek.
  *  Mar 7, 2019.
+ *  
+ *  This class is responsible for handling all motors to achieve a desired move.
+ *  
  */
 
 
@@ -37,8 +40,8 @@ class MovementController {
 
 
         // Methods.
-        void move(char dir);
-        void stopAll();
+        void move(char dir);            // Triggers the movement of all motors accordingly.
+        void stopAll();                 // Brakes all motors.
     
 };
 

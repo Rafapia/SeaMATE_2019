@@ -15,7 +15,7 @@
 // Define contructor method.
 MovementController::MovementController(byte FL_A, byte FL_B, byte FL_PWM, byte FR_A, byte FR_B, byte FR_PWM, byte BL_A, byte BL_B, byte BL_PWM, byte BR_A, byte BR_B, byte BR_PWM) {
 
-    // Create one Motor object instance per motor.
+    // Create one Motor object instance per motor and place them into the motors array.
     motors[0] = Motor(FL_A, FL_B, FL_PWM, NORMAL);
     motors[1] = Motor(FR_A, FR_B, FR_PWM, NORMAL);
     motors[2] = Motor(BL_A, BL_B, BL_PWM, NORMAL);
@@ -29,6 +29,8 @@ MovementController::MovementController(byte FL_A, byte FL_B, byte FL_PWM, byte F
 // Define move method.
 void MovementController::move(char dir) {
 
+
+    // For the prototype, controls are limited to W A S D movements, and turns with Q (counterclockwise) and E (clockwise).
     switch (dir) {
 
         case 'w':
@@ -56,6 +58,22 @@ void MovementController::move(char dir) {
             break;
 
         case 'd':
+            motors[FL_MOTOR].setSpeed(1);
+            motors[FR_MOTOR].setSpeed(1);
+            motors[BL_MOTOR].setSpeed(1);
+            motors[BR_MOTOR].setSpeed(1);
+            Serial.println("Right");
+            break;
+
+        case 'q':
+            motors[FL_MOTOR].setSpeed(1);
+            motors[FR_MOTOR].setSpeed(1);
+            motors[BL_MOTOR].setSpeed(1);
+            motors[BR_MOTOR].setSpeed(1);
+            Serial.println("Right");
+            break;
+
+        case 'e':
             motors[FL_MOTOR].setSpeed(1);
             motors[FR_MOTOR].setSpeed(1);
             motors[BL_MOTOR].setSpeed(1);

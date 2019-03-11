@@ -20,7 +20,7 @@ Motor::Motor(byte pinA, byte pinB, byte pinPWM, bool inverted) {
     _pinB = pinB;
     _pinPWM = pinPWM;
 
-    // Store direction;
+    // Store default direction;
     _inverted = inverted;
 
     // Set the pinModes for all of them.
@@ -39,13 +39,7 @@ Motor::Motor(byte pinA, byte pinB, byte pinPWM, bool inverted) {
 // Define default contructor method.
 Motor::Motor() {
 
-    // Store pins to private variables.
-    _pinA = 0;
-    _pinB = 0;
-    _pinPWM = 0;
-
-    // Store direction;
-    _inverted = NORMAL;
+    // Don't do anything for default constructor.
 }
 
 
@@ -54,10 +48,10 @@ Motor::Motor() {
 // Define setDirection method.
 void Motor::setDirection(bool direction) {
 
-    if (direction==FORWARD) {
+    if (direction==FORWARD) {                   // Set pins A and B for FORWARD motion.
         digitalWrite(_pinA, _inverted);
         digitalWrite(_pinB, !_inverted);
-    } else if (direction==BACKWARD) {
+    } else if (direction==BACKWARD) {           // Set pins A and B for BACKWARD motion.
         digitalWrite(_pinA, !_inverted);
         digitalWrite(_pinB, _inverted);
     }
@@ -69,15 +63,15 @@ void Motor::setDirection(bool direction) {
 // Define setSpeed method.
 void Motor::setSpeed(float speed) {
 
-    _speed = constrain(speed, -1, 1) * 255;
+    _speed = constrain(speed, -1, 1) * 255;     // Input should range between -1 and 1. Nevertheless, constrain the value and rescale to -255 to 255 for PWM.
 
-    if (_speed > 0) {
+    if (_speed > 0) {                           // Forward.
         setDirection(FORWARD);
         analogWrite(_pinPWM, abs(_speed));
-    } else if (_speed < 0) {
+    } else if (_speed < 0) {                    // Backward.
         setDirection(BACKWARD);
         analogWrite(_pinPWM, abs(_speed));
-    } else {
+    } else {                                    // Brake.
         stop();
     }
 }
@@ -88,11 +82,11 @@ void Motor::setSpeed(float speed) {
 // Define setSpeed method.
 void Motor::stop() {
 
-    _speed = 0;
+    _speed = 0;                                 // Reset _speed variable.
 
-    digitalWrite(_pinA, HIGH);
+    digitalWrite(_pinA, HIGH);                  // Brake motor.
     digitalWrite(_pinB, HIGH);
-    analogWrite(_pinPWM, 0);
+    analogWrite(_pinPWM, 0);                    // Reset PWM.
 }
 
 
