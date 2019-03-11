@@ -34,8 +34,8 @@ void MovementController::move(char dir) {
     switch (dir) {
 
         case 'w':
-            motors[FL_MOTOR].setSpeed(1);
-            motors[FR_MOTOR].setSpeed(1);
+            motors[FL_MOTOR].setSpeed(-1);
+            motors[FR_MOTOR].setSpeed(-1);
             motors[BL_MOTOR].setSpeed(1);
             motors[BR_MOTOR].setSpeed(1);
             Serial.println("Forward");
@@ -43,42 +43,42 @@ void MovementController::move(char dir) {
 
         case 'a':
             motors[FL_MOTOR].setSpeed(1);
-            motors[FR_MOTOR].setSpeed(1);
+            motors[FR_MOTOR].setSpeed(-1);
             motors[BL_MOTOR].setSpeed(1);
-            motors[BR_MOTOR].setSpeed(1);
+            motors[BR_MOTOR].setSpeed(-1);
             Serial.println("Left");
             break;
 
         case 's':
             motors[FL_MOTOR].setSpeed(1);
             motors[FR_MOTOR].setSpeed(1);
-            motors[BL_MOTOR].setSpeed(1);
-            motors[BR_MOTOR].setSpeed(1);
+            motors[BL_MOTOR].setSpeed(-1);
+            motors[BR_MOTOR].setSpeed(-1);
             Serial.println("Backward");
             break;
 
         case 'd':
-            motors[FL_MOTOR].setSpeed(1);
+            motors[FL_MOTOR].setSpeed(-1);
             motors[FR_MOTOR].setSpeed(1);
-            motors[BL_MOTOR].setSpeed(1);
+            motors[BL_MOTOR].setSpeed(-1);
             motors[BR_MOTOR].setSpeed(1);
             Serial.println("Right");
             break;
 
         case 'q':
             motors[FL_MOTOR].setSpeed(1);
-            motors[FR_MOTOR].setSpeed(1);
-            motors[BL_MOTOR].setSpeed(1);
+            motors[FR_MOTOR].setSpeed(0);
+            motors[BL_MOTOR].setSpeed(0);
             motors[BR_MOTOR].setSpeed(1);
-            Serial.println("Right");
+            Serial.println("Turning Left");
             break;
 
         case 'e':
-            motors[FL_MOTOR].setSpeed(1);
+            motors[FL_MOTOR].setSpeed(0);
             motors[FR_MOTOR].setSpeed(1);
             motors[BL_MOTOR].setSpeed(1);
-            motors[BR_MOTOR].setSpeed(1);
-            Serial.println("Right");
+            motors[BR_MOTOR].setSpeed(0);
+            Serial.println("Turning Right");
             break;
 
         default:
