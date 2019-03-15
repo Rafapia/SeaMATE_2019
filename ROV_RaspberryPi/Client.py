@@ -1,62 +1,80 @@
 from SocketUtils.SocketUtils import ClientSocket
+from socket import error as socketError
 from time import sleep
+import threading
 import cv2
 
 
-# Create objects.
-client = ClientSocket(verbose=0)
-camera = cv2.VideoCapture(0)
-
-# Set FPS.
-FPS = 20
-frameInterval = 1/FPS
+	
 
 
-# REMOVE THIS BREAK METHOD FOR REAL ROBOT!!
-# OTHERWISE THE ROBOT WILL HAVE TO BE REBOOTED 
-# TO REINITIALIZE THE CLIENT.
-# Handle KeyboardInterrupts. 
-try:
+# Run script.
+if (__name__=='__main__'):
 
-    # Always try to connect to server and stream data.
-    while True:
+	# Create objects.
+	client = ClientSocket(verbose=0)
+	camera = cv2.VideoCapture(0)
 
-        # Setup the Client socket for streaming.
-        client.initSocket()
-        client.connect('localhost', 5555)
+	# Set maximum FPS.
+	FPS = 20
 
-        # Once the connection is established, send video stream.
-        while True:
+	# Calculate the frame interval.
+	frameInterval = 1/FPS
 
-            # Grab frame.
-            ret, frame = camera.read()
+	# Always try to connect to server and stream data.
+	while True:
 
-            # Shrink frame's size.
-            # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-            frame = cv2.resize(frame, (800, 500))
+		# If any error occurs, try again.
+		try:
 
-            # Encode frame
-            encoded, frame = cv2.imencode(".jpg", frame)
+			# Setup the Client socket for streaming.
+			client.initSocket()
+			client.connect('localhost', 5555)
 
-            # Send frame to Server.
-            client.send(frame)
+			# Once the connection is established, send video stream.
+			while True:
 
+				# Grab frame.
+				ret, frame = camera.read()
 
-            # Receive commands from the Server.
-            command = client.recv()
-            if (command=="Kill Client"):
-            	raise KeyboardInterrupts
+				# Shrink frame's size.
+				# frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+				frame = cv2.resize(frame, (800, 500))
 
-            print(command)
+				# Encode frame
+				encoded, frame = cv2.imencode(".jpg", frame)
 
-            # Wait interval for max FPS to be achieved.
-            sleep(frameInterval)
-
-
-except Exception:
-    client.close()
-    camera.release()
+				# Send frame to Server.
+				client.send(frame)
 
 
-# End print.
-print("Client closed.")
+				# Receive commands from the Server.
+				command = client.recv()
+				if (command=="Kill Client"):
+					# Close everything properly.
+					client.close()
+					camera.release()
+					
+					
+					# End print.
+					print("Client closed.")
+
+					# Close program.
+					exit()
+
+
+				print(command)
+
+				# Wait interval for max FPS to be achieved.
+				sleep(frameInterval)
+
+
+		except Exception as e:
+
+			# If connection refused, try again.
+			print(f"Trying to connect with server.")
+			sleep(1)
+
+
+
+	
