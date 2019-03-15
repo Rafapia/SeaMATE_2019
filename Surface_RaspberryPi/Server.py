@@ -1,58 +1,58 @@
 from SocketUtils.SocketUtils import ServerSocket
+import threading
 import cv2
 
 
-# Create all objects.
-server = ServerSocket('localhost', 5555)
 
-# Setup Server socket.
-server.initSocket()
+# Run
+if (__name__=='__main__'):
 
-# Command.
-command = {"FL": 1,
-           "FR": 1,
-           "BL": -1,
-           "BR": -1,
-           "TL": 0.5,
-           "TR": 0.5}
+	# Create all objects.
+	server = ServerSocket('localhost', 5555)
 
+	# Setup Server socket.
+	server.initSocket()
 
-try:
-    # Continously accept new connections.
-    while True:
-
-        # Checkpoint print.
-        print("Waiting for connections.")
-
-        # Accept new connection.
-        server.acceptConnections()
+	# Command.
+	command = "Kill Client."
 
 
-        # Continuously get new frames from Client.
-        while True:
+	try:
+	    # Continously accept new connections.
+	    while True:
 
-            # Receive frame
-            frame = server.recv()
+	        # Checkpoint print.
+	        print("Waiting for connections.")
 
-            # Decode frame.
-            frame = cv2.imdecode(frame, 1)
-
-            # Show frame.
-            cv2.imshow("Video Feed", frame)
+	        # Accept new connection.
+	        server.acceptConnections()
 
 
-            # Sent command to Client.
-            server.send(command)
+	        # Continuously get new frames from Client.
+	        while True:
 
-            # Check for close.
-            if (cv2.waitKey(2) == 27):
-                break
+	            # Receive frame
+	            frame = server.recv()
+
+	            # Decode frame.
+	            frame = cv2.imdecode(frame, 1)
+
+	            # Show frame.
+	            cv2.imshow("Video Feed", frame)
 
 
+	            # Sent command to Client.
+	            server.send(command)
 
-except Exception:
-    server.close()
-    cv2.destroyAllWindows()
+	            # Check for close.
+	            if (cv2.waitKey(2) == 27):
+	                break
 
 
-print("Server closed.")
+	except Exception as e:
+
+		# print(e)
+		server.send("Kill Client")
+		server.close()
+		cv2.destroyAllWindows()
+		print("Server closed.")
