@@ -1,22 +1,62 @@
-import socket
-import json
-import numpy as np
+from SocketUtils.SocketUtils import ClientSocket
+from time import sleep
+import cv2
 
 
-CLIENT_IP = 'localhost'
-CLIENT_PORT = 5555
-MAX_NUM_CONNECTIONS = 1
-BUFFER_SIZE = 1024
-MESSAGE = "Hey! We have established a connection!"
+# Create objects.
+client = ClientSocket(verbose=0)
+camera = cv2.VideoCapture(0)
 
-if (__name__=='__main__'):
+# Set FPS.
+FPS = 20
+frameInterval = 1/FPS
 
-	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	client.connect((CLIENT_IP, CLIENT_PORT))
-	client.send(MESSAGE.encode("utf-8"))
-	
-	data = client.recv(BUFFER_SIZE)
-	data = data.decode("utf-8")
-	client.close()
-	
-	print(f"received data: {data}")
+
+# REMOVE THIS BREAK METHOD FOR REAL ROBOT!!
+# OTHERWISE THE ROBOT WILL HAVE TO BE REBOOTED 
+# TO REINITIALIZE THE CLIENT.
+# Handle KeyboardInterrupts. 
+try:
+
+    # Always try to connect to server and stream data.
+    while True:
+
+        # Setup the Client socket for streaming.
+        client.initSocket()
+        client.connect('localhost', 5555)
+
+        # Once the connection is established, send video stream.
+        while True:
+
+            # Grab frame.
+            ret, frame = camera.read()
+
+            # Shrink frame's size.
+            # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+            frame = cv2.resize(frame, (800, 500))
+
+            # Encode frame
+            encoded, frame = cv2.imencode(".jpg", frame)
+
+            # Send frame to Server.
+            client.send(frame)
+
+
+            # Receive commands from the Server.
+            command = client.recv()
+            if (command=="Kill Client"):
+            	raise KeyboardInterrupts
+
+            print(command)
+
+            # Wait interval for max FPS to be achieved.
+            sleep(frameInterval)
+
+
+except Exception:
+    client.close()
+    camera.release()
+
+
+# End print.
+print("Client closed.")

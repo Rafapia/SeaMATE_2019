@@ -1,36 +1,58 @@
-import socket
-import json
-import numpy as np
+from SocketUtils.SocketUtils import ServerSocket
+import cv2
 
 
-SERVER_IP = 'localhost'
-SERVER_PORT = 5555
-MAX_NUM_CONNECTIONS = 1
-BUFFER_SIZE = 1024
+# Create all objects.
+server = ServerSocket('localhost', 5555)
+
+# Setup Server socket.
+server.initSocket()
+
+# Command.
+command = {"FL": 1,
+           "FR": 1,
+           "BL": -1,
+           "BR": -1,
+           "TL": 0.5,
+           "TR": 0.5}
 
 
-if __name__=='__main__':
+try:
+    # Continously accept new connections.
+    while True:
+
+        # Checkpoint print.
+        print("Waiting for connections.")
+
+        # Accept new connection.
+        server.acceptConnections()
 
 
-	server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	server.bind((SERVER_IP, SERVER_PORT))
-	server.listen(MAX_NUM_CONNECTIONS)
-	print("Server running...")
+        # Continuously get new frames from Client.
+        while True:
 
-	connection, address = server.accept()
-	print(f"Connection established to address {address}")
+            # Receive frame
+            frame = server.recv()
 
-	while True:
+            # Decode frame.
+            frame = cv2.imdecode(frame, 1)
 
-		data = connection.recv(BUFFER_SIZE)
-		data = data.decode("utf-8")
-
-		if (data is None):
-			break
-
-		print(f"Received data: {data}")
-
-		connection.send(f"Received data: {data}".encode("utf-8"))
+            # Show frame.
+            cv2.imshow("Video Feed", frame)
 
 
-  	# connection.close()
+            # Sent command to Client.
+            server.send(command)
+
+            # Check for close.
+            if (cv2.waitKey(2) == 27):
+                break
+
+
+
+except Exception:
+    server.close()
+    cv2.destroyAllWindows()
+
+
+print("Server closed.")
