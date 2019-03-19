@@ -1,6 +1,7 @@
-from SocketUtils.SocketUtils import ServerSocket
+from SocketUtils.SocketUtils import ServerSocket, SocketUtilsException
 import threading
 import cv2
+import time
 
 
 
@@ -8,7 +9,7 @@ import cv2
 if (__name__=='__main__'):
 
 	# Create all objects.
-	server = ServerSocket('localhost', 5555)
+	server = ServerSocket('192.168.86.92', 5555)
 
 	# Setup Server socket.
 	server.initSocket()
@@ -18,36 +19,43 @@ if (__name__=='__main__'):
 
 
 	try:
-	    # Continously accept new connections.
-	    while True:
+		# Continously accept new connections.
+		while True:
 
-	        # Checkpoint print.
-	        print("Waiting for connections.")
+			# Checkpoint print.
+			print("Waiting for connections.")
 
-	        # Accept new connection.
-	        server.acceptConnections()
-
-
-	        # Continuously get new frames from Client.
-	        while True:
-
-	            # Receive frame
-	            frame = server.recv()
-
-	            # Decode frame.
-	            frame = cv2.imdecode(frame, 1)
-
-	            # Show frame.
-	            cv2.imshow("Video Feed", frame)
+			# Accept new connection.
+			server.acceptConnections()
 
 
-	            # Sent command to Client.
-	            server.send(command)
+			# Continuously get new frames from Client.
+			while True:
 
-	            # Check for close.
-	            if (cv2.waitKey(2) == 27):
-	                break
+				# Start.
+				start = time.time()
 
+				# Receive frame
+				frame = server.recv()
+
+				# Decode frame.
+				frame = cv2.imdecode(frame, 1)
+
+				# Show frame.
+				cv2.imshow("Video Feed", frame)
+
+
+				# Sent command to Client.
+				server.send(command)
+
+				# Check for close.
+				if (cv2.waitKey(2) == 27):
+					break
+
+				print(f"FPS: {1/(time.time()-start)}")
+
+	except SocketUtilsException as e:
+		print("Socket Error")
 
 	except Exception as e:
 

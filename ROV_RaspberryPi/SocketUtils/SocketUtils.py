@@ -10,6 +10,12 @@ import socket
 import pickle
 
 
+class SocketUtilsException(Exception):
+    '''
+    Allows for custom Error messages.
+    '''
+    pass
+
 
 class ServerSocket:
     '''
@@ -57,8 +63,9 @@ class ServerSocket:
             if (self.VERBOSE==1):
                 print(f"Successfuly created Server socket at {self.ADDRESS}")
 
+
         except Exception as e:
-            raise Exception(e)
+            raise SocketUtilsException(f"Unable to create socket")
 
 
         try:
@@ -73,8 +80,9 @@ class ServerSocket:
             if (self.VERBOSE==1):
                 print(f"Successfuly bound Server socket at {self.ADDRESS}")
 
+
         except Exception as e:
-            raise Exception(e)
+            raise SocketUtilsException(f"Unable to bind server socket")
 
         try:
             # Checkpoint print:
@@ -84,8 +92,9 @@ class ServerSocket:
             # Socket listen.
             self.SOCKET.listen(self.MAX_CLIENTS)
 
+
         except Exception as e:
-            raise Exception(e)
+            raise SocketUtilsException(f"Unable to listen to port")
 
 
 
@@ -105,7 +114,6 @@ class ServerSocket:
 
 
 
-
     def send(self, data):
         '''
         Sends any object to the connected socket.
@@ -115,7 +123,7 @@ class ServerSocket:
 
         # Check if there is client to send data.
         if (self.CLIENT is None):
-            raise Exception("No client to send data to.")
+            raise SocketUtilsException("No client to send data to")
 
         # Prepare data for tranfer.
         data = self.packData(data)
@@ -259,17 +267,18 @@ class ClientSocket:
         try:
             # Checkpoint print.
             if (self.VERBOSE==2):
-                print(f"Creating Client TCP/STREAM socket.")
+                print(f"Creating Client TCP/STREAM socket")
 
             # Create Server socket.
             self.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Checkpoint print.
             if (self.VERBOSE==1):
-                print(f"Successfuly created Client TCP/STREAM socket.")
+                print(f"Successfuly created Client TCP/STREAM socket")
+
 
         except Exception as e:
-            raise Exception(e)
+            raise SocketUtilsException(f"Unable to create socket")
 
 
 
@@ -290,17 +299,18 @@ class ClientSocket:
         try:
             # Checkpoint print.
             if (self.VERBOSE==2):
-                print(f"Connecting Client to Server at {self.SERVER_ADDRESS}.")
+                print(f"Connecting Client to Server at {self.SERVER_ADDRESS}")
 
             # Create Server socket.
             self.SOCKET.connect(self.SERVER_ADDRESS)
 
             # Checkpoint print.
             if (self.VERBOSE==1):
-                print(f"Successfuly created Client TCP/STREAM socket.")
+                print(f"Successfuly created Client TCP/STREAM socket")
+
 
         except Exception as e:
-            raise Exception(e)
+            raise SocketUtilsException(f"Unable to connect to server")
 
 
 
@@ -313,13 +323,14 @@ class ClientSocket:
 
         # Check if there is client to send data.
         if (self.SOCKET is None):
-            raise Exception("No client to send data to.")
+            raise SocketUtilsException("No client to send data to")
 
         # Prepare data for tranfer.
         data = self.packData(data)
 
         # Send data to Client.
         self.SOCKET.sendall(data)
+
 
 
 
@@ -407,14 +418,15 @@ class ClientSocket:
 
         # Checkpoint print.
         if (self.VERBOSE == 2):
-            print(f"Closing Client socket.")
+            print(f"Closing Client socket")
 
         # Close socket.
         self.SOCKET.close()
 
         # Checkpoint print.
         if (self.VERBOSE == 1):
-            print(f"Closed Client socket.")
+            print(f"Closed Client socket")
+
 
 
 

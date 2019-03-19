@@ -1,4 +1,4 @@
-from SocketUtils.SocketUtils import ClientSocket
+from SocketUtils.SocketUtils import ClientSocket, SocketUtilsException
 from socket import error as socketError
 from time import sleep
 import threading
@@ -16,7 +16,7 @@ if (__name__=='__main__'):
 	camera = cv2.VideoCapture(0)
 
 	# Set maximum FPS.
-	FPS = 20
+	FPS = 60
 
 	# Calculate the frame interval.
 	frameInterval = 1/FPS
@@ -29,7 +29,7 @@ if (__name__=='__main__'):
 
 			# Setup the Client socket for streaming.
 			client.initSocket()
-			client.connect('localhost', 5555)
+			client.connect('169.254.99.200', 5555)
 
 			# Once the connection is established, send video stream.
 			while True:
@@ -68,12 +68,15 @@ if (__name__=='__main__'):
 				# Wait interval for max FPS to be achieved.
 				sleep(frameInterval)
 
+		except SocketUtilsException as e:
+			print("Trying to connect with server")
+			sleep(1)
 
 		except Exception as e:
 
-			# If connection refused, try again.
-			print(f"Trying to connect with server.")
-			sleep(1)
+			client.close()
+			camera.release()
+			exit()
 
 
 
